@@ -1,0 +1,24 @@
+-- using variable we can get a output in a scalar values not as table one 
+--let's see how its done 
+
+alter procedure avg_count @country nvarchar(50) ='usa' as  -- HERE WE USED DEFAULT COUNTRY VALUE 
+begin
+	declare     -- declare part is step 1
+	@total_customers int ,
+	@avg_score float,
+	@country_name nvarchar;
+
+select 
+	@total_customers =count(customerid),   --> step 2 assign the value to variables 
+	@avg_score =avg(score)
+	from sales.customers
+	where country=@country
+
+	-->step-3 printing and casting 
+	print 'Total number of  customers '+@country+':'+ cast(@total_customers  as nvarchar(50));
+	print 'Avg score of '+@country+':'+cast(@avg_score as nvarchar(50));
+	end
+
+-- executing with and without parameter 
+exec avg_count @country ='germany'
+exec avg_count
