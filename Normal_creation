@@ -1,0 +1,85 @@
+use salesdb
+-- stored procedures 
+
+create procedure avg_count as
+	begin
+	select 
+	count(customerid) as people,
+	avg(score) as avg_score
+	from sales.customers
+	where country='usa'
+	end
+
+exec avg_count
+
+--for german customers find the total no of customers and avg score of them 
+
+create procedure avg_count_germany as
+	begin
+	select 
+	count(customerid) as people,
+	avg(score) as avg_score
+	from sales.customers
+	where country='germany'
+	end
+
+
+exec avg_count_germany
+
+
+/* to help of the parameter we can easily get the answer whatever we want */
+--let's see how its be 
+
+alter procedure avg_count @country nvarchar(50) as
+begin
+	select 
+	count(customerid) as people,
+	avg(score) as avg_score,
+	@country 
+	from sales.customers
+	where country=@country
+	end
+
+	--executing the stored procedure based on the parameter[germany]
+exec avg_count @country='germany'
+--	--executing the stored procedure based on the parameter[usa]
+exec avg_count @country = 'usa' 
+
+-- how to drop a procedure 
+
+drop procedure avg_count
+
+-- if the user cannot give the parameter means we defaultly give the parameter in procedure statement
+--let's see how it is 
+
+alter procedure avg_count @country nvarchar(50)  ='usa' as
+begin
+	select 
+	count(customerid) as people,
+	avg(score) as avg_score,
+	@country 
+	from sales.customers
+	where country=@country;
+
+ -- FIND THE TOTAL NUMBER OF ORDER AND TOTAL SALES   ON SPECIFIED COUNTRY
+	select 
+	count(orderid) as tot_count,
+	sum(sales)as tot_sales
+	from sales.orders o
+	left join sales.customers c
+	on
+	c.customerid=o.customerid
+	where c.country=@country
+
+	end
+
+--executing this [without parameter]
+
+exec avg_count
+
+--executing this [with parameter]
+exec avg_count @country ='germany'
+
+
+
+
